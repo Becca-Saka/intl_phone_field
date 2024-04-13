@@ -1,6 +1,7 @@
 library intl_phone_field;
 
 import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -180,6 +181,11 @@ class IntlPhoneField extends StatefulWidget {
   /// Position of an icon [leading, trailing]
   final IconPosition dropdownIconPosition;
 
+  /// Whether to use dialing code or  country code.
+  ///
+  /// Default value is `false`.
+  final bool useCountryCode;
+
   /// Icon of the drop down button.
   ///
   /// Default is [Icon(Icons.arrow_drop_down)]
@@ -280,6 +286,7 @@ class IntlPhoneField extends StatefulWidget {
     this.keyboardAppearance,
     @Deprecated('Use searchFieldInputDecoration of PickerDialogStyle instead') this.searchText = 'Search country',
     this.dropdownIconPosition = IconPosition.leading,
+    this.useCountryCode = false,
     this.dropdownIcon = const Icon(Icons.arrow_drop_down),
     this.autofocus = false,
     this.textInputAction,
@@ -485,7 +492,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 ],
                 FittedBox(
                   child: Text(
-                    '+${_selectedCountry.dialCode}',
+                    widget.useCountryCode ? _selectedCountry.code : '+${_selectedCountry.dialCode}',
                     style: widget.dropdownTextStyle,
                   ),
                 ),
