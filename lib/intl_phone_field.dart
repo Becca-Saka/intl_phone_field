@@ -191,6 +191,11 @@ class IntlPhoneField extends StatefulWidget {
   /// Default is [Icon(Icons.arrow_drop_down)]
   final Widget dropdownIcon;
 
+  /// Widget to add before the text field.
+  ///
+  /// Default is null
+  final Widget? prefix;
+
   /// Whether this text field should focus itself if nothing else is already focused.
   final bool autofocus;
 
@@ -252,6 +257,9 @@ class IntlPhoneField extends StatefulWidget {
   /// Enable the autofill hint for phone number.
   final bool disableAutoFillHints;
 
+  /// Disable the country picker.
+  final bool disableCountryPicker;
+
   /// If null, default magnification configuration will be used.
   final TextMagnifierConfiguration? magnifierConfiguration;
 
@@ -266,6 +274,7 @@ class IntlPhoneField extends StatefulWidget {
     this.textAlignVertical,
     this.onTap,
     this.readOnly = false,
+    this.disableCountryPicker = false,
     this.initialValue,
     this.keyboardType = TextInputType.phone,
     this.controller,
@@ -303,6 +312,7 @@ class IntlPhoneField extends StatefulWidget {
     this.pickerDialogStyle,
     this.flagsButtonMargin = EdgeInsets.zero,
     this.magnifierConfiguration,
+    this.prefix,
   }) : super(key: key);
 
   @override
@@ -466,7 +476,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         decoration: widget.dropdownDecoration,
         child: InkWell(
           borderRadius: widget.dropdownDecoration.borderRadius as BorderRadius?,
-          onTap: widget.enabled ? _changeCountry : null,
+          onTap: widget.enabled && !widget.disableCountryPicker ? _changeCountry : null,
           child: Padding(
             padding: widget.flagsButtonPadding,
             child: Row(
@@ -476,6 +486,10 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 const SizedBox(
                   width: 4,
                 ),
+                if (widget.prefix != null) ...[
+                  widget.prefix!,
+                  const SizedBox(width: 4),
+                ],
                 if (widget.enabled &&
                     widget.showDropdownIcon &&
                     widget.dropdownIconPosition == IconPosition.leading) ...[

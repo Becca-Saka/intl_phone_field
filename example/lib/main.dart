@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +16,8 @@ class _MyAppState extends State<MyApp> {
   GlobalKey<FormState> _formKey = GlobalKey();
 
   FocusNode focusNode = FocusNode();
-
+  PhoneNumber? initialValue;
+  // String? countryCode = kDebugMode ? 'NG' : 'GB';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,6 +57,40 @@ class _MyAppState extends State<MyApp> {
                   height: 10,
                 ),
                 IntlPhoneField(
+                  showCountryFlag: false,
+                  useCountryCode: true,
+                  prefix: Icon(Icons.abc),
+                  disableCountryPicker: true,
+                  initialValue: initialValue?.number,
+                  dropdownIconPosition: IconPosition.trailing,
+                  flagsButtonPadding: const EdgeInsets.only(left: 16.0),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Enter a valid phone number';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.all(16),
+                    filled: true,
+                    counterStyle: const TextStyle(fontSize: 0),
+                    hintText: '(+1) 704 8842 321',
+                  ),
+
+                  onCountryChanged: (value) {
+                    print('Country changed to: ${value.dialCode}');
+                    onCountryChanged(value);
+                  },
+                  // initialCountryCode: 'US',
+                  // initialCountryCode: 'GB',
+                  initialCountryCode: initialValue?.countryCode ?? 'GB',
+                  onChanged: (phone) {
+                    // print(phone.completeNumber);
+                    onChanged(phone);
+                  },
+                ),
+                IntlPhoneField(
                   focusNode: focusNode,
                   decoration: InputDecoration(
                     labelText: 'Phone Number',
@@ -62,6 +99,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                   languageCode: "en",
+                  initialCountryCode: 'GB',
                   onChanged: (phone) {
                     print(phone.completeNumber);
                   },
@@ -86,5 +124,28 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  void onChanged(PhoneNumber? value) {
+    initialValue = value;
+    setState(() {});
+  }
+
+  void onCountryChanged(Country? value) {
+    if (value == null) return;
+    print('${value.dialCode} ${value.code} ');
+    print('before ${initialValue?.countryCode} ${initialValue?.countryISOCode}');
+
+    initialValue = PhoneNumber(
+      countryISOCode: value.code,
+      countryCode: '+${value.dialCode}',
+      number: initialValue?.number ?? '',
+    );
+    // countryCode = value.dialCode;
+
+    // phoneNumber?.countryCode = value.dialCode;
+    // phoneNumber?.countryISOCode = value.code;
+    print('after ${initialValue?.countryCode} ${initialValue?.countryISOCode}');
+    setState(() {});
   }
 }
